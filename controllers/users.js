@@ -13,7 +13,7 @@ module.exports.getUserId = ( req, res, next) => {
     .findById(req.params.id)
     .orFail()
     .then((user) => res.status(OK).send(user))
-      .catch(err => res.status(BAD_REQUEST).send({ message: 'Произошла ошибка получения пользователя по ID' }));
+      .catch(err => res.status(NOT_FOUND).send({ message: 'Произошла ошибка получения пользователя по ID' }));
   };
 
 // Создание пользователя (Регистрация)
@@ -22,12 +22,12 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if {
         res.status(BAD_REQUEST).send({
-          message: 'Пользователь не создан, ошибка данных.',
+          message: 'Пользователь уже зарегистрирован.',
         });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при регистрации пользователя' });
       }
     });
 };
