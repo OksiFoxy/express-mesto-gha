@@ -21,15 +21,8 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED).send(user))
-    .catch((err) => {
-      if (err) {
-        res.status(BAD_REQUEST).send({
-          message: 'Пользователь уже зарегистрирован.',
-        });
-      } else {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при регистрации пользователя' });
-      }
-    });
+    .catch(err => res.status(BAD_REQUEST)
+    .send({ message: 'Ошибка в некорректных данных пользователя' }));
 };
 
 
