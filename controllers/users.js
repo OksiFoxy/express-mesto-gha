@@ -21,8 +21,7 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED).send(user))
-    .catch(err => res.status(BAD_REQUEST)
-    .send({ message: 'Ошибка в некорректных данных пользователя' }));
+    .catch(err => res.status(BAD_REQUEST).send({ message: 'Произошла ошибка' }));
 };
 
 
