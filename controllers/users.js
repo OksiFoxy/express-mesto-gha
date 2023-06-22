@@ -13,7 +13,7 @@ module.exports.getUserId = ( req, res, next) => {
     .findById(req.params.id)
     .orFail()
     .then((user) => res.status(OK).send(user))
-      .catch(err => res.status(500).send({ message: 'Произошла ошибка получения пользователя по ID' }));
+      .catch(err => res.status(BAD_REQUEST).send({ message: 'Произошла ошибка получения пользователя по ID' }));
   };
 
 // Создание пользователя (Регистрация)
@@ -40,7 +40,7 @@ module.exports.updateUserData = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new NotFound('Пользователь с таким ID не найден.'))
     .then((updatedUserData) => res.send({ data: updatedUserData }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(err => res.status(BAD_REQUEST).send({ message: 'Произошла ошибка' }));
 };
 
 // Обновление аватара пользователя
@@ -50,5 +50,5 @@ module.exports.updateUserAvatar  = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(new NotFound('Некорректный ID пользователя для обновления аватара.'))
     .then((newAvatar) => res.send({ data: newAvatar }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка изменения аватара' }));
+    .catch(err => res.status(BAD_REQUEST).send({ message: 'Произошла ошибка изменения аватара' }));
 };
