@@ -22,7 +22,7 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
-      if (err.code === 11000) {
+      if (err) {
         res.status(BAD_REQUEST).send({
           message: 'Пользователь уже зарегистрирован.',
         });
