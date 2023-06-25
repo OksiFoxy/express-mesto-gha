@@ -28,7 +28,6 @@ module.exports.getUserId = ( req, res, next) => {
       next(err);
     });
 };
-  };
 
 // Создание пользователя (Регистрация)
 module.exports.createUser = (req, res) => {
