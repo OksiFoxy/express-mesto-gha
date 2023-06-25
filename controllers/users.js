@@ -13,7 +13,7 @@ module.exports.getUserId = ( req, res, next) => {
     .findById(req.params.id)
     .orFail()
     .then((user) => res.status(OK).send(user))
-      .catch(err => res.status(NOT_FOUND).send({ message: 'Произошла ошибка получения пользователя по ID' }));
+    .catch(err => res.status(NOT_FOUND).send({ message: 'Произошла ошибка получения пользователя по ID' }));
   };
 
 // Создание пользователя (Регистрация)
@@ -21,7 +21,13 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED).send(user))
-    .catch(err => res.status(BAD_REQUEST).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+        return;
+      }
+      next(err);
+    });
 };
 
 
@@ -32,8 +38,13 @@ module.exports.updateUserData = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new NotFound('Пользователь с таким ID не найден.'))
     .then((updatedUserData) => res.send({ data: updatedUserData }))
-    .catch(err => res.status(BAD_REQUEST).send({ message: 'Произошла ошибка' }));
-};
+    .catch((err) => {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+        return;
+      }
+      next(err);
+    });
 
 // Обновление аватара пользователя
 module.exports.updateUserAvatar  = (req, res, next) => {
@@ -42,5 +53,11 @@ module.exports.updateUserAvatar  = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(new NotFound('Некорректный ID пользователя для обновления аватара.'))
     .then((newAvatar) => res.send({ data: newAvatar }))
-    .catch(err => res.status(BAD_REQUEST).send({ message: 'Произошла ошибка изменения аватара' }));
+    .catch((err) => {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные при обновлении аватара'));
+        return;
+      }
+      next(err);
+    });
 };
