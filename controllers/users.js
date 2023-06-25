@@ -1,6 +1,7 @@
 const User = require('../models/userSchema');
 const { OK, CREATED, BAD_REQUEST, NOT_FOUND, SERVER_ERROR,} = require('../utils/constants');
 
+
 // Получение списка пользователей
 module.exports.getUserList = (req, res, next) => {
   User.find({})
@@ -33,13 +34,15 @@ module.exports.getUserId = ( req, res, next) => {
 
 // Создание пользователя (Регистрация)
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body.data;
-  User.create({ name, about, avatar })
+  console.log(req.user._id);
+  const { name, about, avatar } = req.body;
+  const owner = req.user._id;
+  User.create({ name, about, avatar, owner })
     .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({
-          message: 'Переданы некорректные данные при создании пользователя.',
+          message: 'Переданы некорректные данные при создании карточки.',
         });
       } else {
         res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
