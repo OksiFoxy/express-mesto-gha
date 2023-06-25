@@ -3,32 +3,29 @@ const { OK, CREATED, BAD_REQUEST, NOT_FOUND, SERVER_ERROR,} = require('../utils/
 
 
 // Получение списка пользователей
-module.exports.getUserList = (req, res, next) => {
+module.exports.getUserList = (req, res) => {
   User.find({})
-    .then((users) => res.send(users))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
+    .then((users) => res.status(OK).send(users))
+    .catch((err) => {
+      res.status(SERVER_ERROR).send({ message: `Ошибка сервера ${err.message}` });
+    });
 };
-
 // Получение пользователя по ID
-module.exports.getUserId = ( req, res, next) => {
-  User
-    .findById(req.params.id)
-    .orFail()
-    .then((user) => res.status(OK).send(user))
+module.exports.getUserId  = (req, res) => {
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
+        return;
+      }
+      res.send(user);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res
-          .status(BAD_REQUEST).send({
-            message: 'Переданы некорректные данные при поиске пользователя',
-          });
+        res.status(BAD_REQUEST).send({ message: `Ошибка валидации: ${err.message}` });
+      } else {
+        res.status(SERVER_ERROR).send({ message: `Ошибка сервера ${err.message}` });
       }
-      if (err.name === 'DocumentNotFoundError') {
-        return res
-          .status(NOT_FOUND).send({
-            message: 'Пользователь c указанным _id не найден',
-          });
-      }
-      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -41,7 +38,7 @@ module.exports.createUser = (req, res) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: `Ошибка валидации: ${err.message}` });
       } else {
-        res.status(SERVER_ERROR).send({ message: `На сервере произошла ошибка` });
+        res.status(SERVER_ERROR).send({ message: `Ошибка сервера ${err.message}` });
       }
     });
 };
@@ -62,15 +59,15 @@ module.exports.updateUserData = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при обновлении профиля` });
+        res.status(BAD_REQUEST).send({ message: `Ошибка валидации: ${err.message}` });
       } else {
-        res.status(SERVER_ERROR).send({ message: `На сервере произошла ошибка` });
+        res.status(SERVER_ERROR).send({ message: `Ошибка сервера ${err.message}` });
       }
     });
 };
 
 // Обновление аватара пользователя
-module.exports.updateUserAvatar= (req, res) => {
+module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body.data;
   User.findByIdAndUpdate(req.user._id, { avatar }, {
     new: true,
@@ -85,9 +82,9 @@ module.exports.updateUserAvatar= (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при обновлении аватара` });
+        res.status(BAD_REQUEST).send({ message: `Ошибка валидации: ${err.message}` });
       } else {
-        res.status(SERVER_ERROR).send({ message: `На сервере произошла ошибка` });
+        res.status(SERVER_ERROR).send({ message: `Ошибка сервера ${err.message}` });
       }
     });
 };
