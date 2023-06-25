@@ -1,78 +1,70 @@
 const User = require('../models/userSchema');
-const NotFoundError = require('../errors/NotFoundError');
-const BadRequestError = require('../errors/BadRequestError');
-
 const { OK, CREATED, BAD_REQUEST, NOT_FOUND, SERVER_ERROR,} = require('../utils/constants');
-
-module.exports.getUsers = (req, res, next) => {
+// Получение списка пользователей
+module.exports.getUserList = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(OK).send(users))
-    .catch((err) => next(err));
+    .then((users) => res.send(users))
+    .catch(() => res.status(SERVER_ERROR).send({ message: 'Ошибка получения списка пользователей' }));
 };
 
-module.exports.getUserById = (req, res, next) => {
-  const { userId } = req.params;
-  User.findById({ _id: userId })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь по указанному _id не найден');
-      }
-      res.status(OK).send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Передан некорректный _id пользователя'));
-        return;
-      }
-      next(err);
-    });
-};
+// Получение пользователя по ID
+module.exports.getUserId = ( req, res, next) => {
+  User
+    .findById(req.params.id)
+    .orFail()
+    .then((user) => res.status(OK).send(user))
+      .catch(err => res.status(NOT_FOUND).send({ message: 'Произошла ошибка получения пользователя по ID' }));
+  };
 
-module.exports.createUser = (req, res, next) => {
+// Создание пользователя (Регистрация)
+module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(OK).send(user))
+    .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
-        return;
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        res.status(BAD_REQUEST).send({
+          message: 'Переданы некорректные данные при создании пользователя.',
+        });
+      } else {
+        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
       }
-      next(err);
     });
 };
 
-module.exports.updateUser = (req, res, next) => {
+
+// Обновление профиля пользователя
+module.exports.updateUserData = (req, res, next) => {
   const { name, about } = req.body;
+
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь с указанным _id не найден');
-      }
-      res.status(OK).send(user);
-    })
+    .orFail(new NotFound('Пользователь с таким ID не найден.'))
+    .then((updatedUserData) => res.send({ data: updatedUserData }))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
-        return;
+        res.status(BAD_REQUEST).send({
+          message: 'Переданы некорректные данные при обновлении данных пользователя.',
+        });
+      } else {
+        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
       }
-      next(err);
     });
 };
 
-module.exports.updateUserAvatar = (req, res, next) => {
+// Обновление аватара пользователя
+module.exports.updateUserAvatar  = (req, res, next) => {
   const { avatar } = req.body;
+
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь с указанным _id не найден');
-      }
-      res.status(OK).send(user);
-    })
+    .orFail(new NotFound('Некорректный ID пользователя для обновления аватара.'))
+    .then((newAvatar) => res.send({ data: newAvatar }))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении аватара'));
-        return;
+        res.status(BAD_REQUEST).send({
+          message: 'Переданы некорректные данные при обновлении аватара пользователя.',
+        });
+      } else {
+        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
       }
-      next(err);
     });
 };
