@@ -1,6 +1,5 @@
 const User = require('../models/userSchema');
 const { OK, CREATED, BAD_REQUEST, NOT_FOUND, SERVER_ERROR,} = require('../utils/constants');
-const InaccurateDataError = require('../errors/InaccurateDataError');
 
 // Получение списка пользователей
 module.exports.getUserList = (req, res, next) => {
@@ -34,7 +33,7 @@ module.exports.getUserId = ( req, res, next) => {
 
 // Создание пользователя (Регистрация)
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const { name, about, avatar } = req.body.data;
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
