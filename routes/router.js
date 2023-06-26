@@ -5,7 +5,8 @@ const cardRoutes = require('./cardsRoutes');
 router.use('/users', userRoutes);
 router.use('/cards', cardRoutes);
 router.use('/*', (req, res) => {
-  res.status(NOT_FOUND)
+  console.log('жмяк')
+  res.status(404)
     .send({ message: '404: Страница не найдена.' });
 });
 
