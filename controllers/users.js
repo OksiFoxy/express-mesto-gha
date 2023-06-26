@@ -7,26 +7,21 @@ const { OK, CREATED, BAD_REQUEST, NOT_FOUND, SERVER_ERROR,} = require('../utils/
 // Получение списка пользователей
 module.exports.getUserList = (req, res) => {
   User.find({})
-    .then((users) => res.send(users))
+    .then((users) => res
+    .send(users))
     .catch(() => res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
 };
 
 
 // Получение пользователя по ID
 module.exports.getUserId = (req, res) => {
-  User.findById(req.params.userId)
-    .then((users) => {
-      if (!users) {
-        return res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
-      }
-      return res.send({ data: users });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: 'Некорректные данные id' });
-      }
-      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-    });
+  User.findById(req.params.id)
+  .then((user) => {
+    if (!user) {
+      res.status(NOT_FOUND).send({ message: 'Нет пользователя с таким id' });
+    } else
+    res.status(OK).send({ data: user });
+  })
 };
 
 // Создание пользователя (Регистрация)
