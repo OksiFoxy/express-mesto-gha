@@ -19,9 +19,16 @@ module.exports.getUserId = (req, res) => {
   .then((user) => {
     if (!user) {
       res.status(NOT_FOUND).send({ message: 'Нет пользователя с таким id' });
-    } else
-    res.status(OK).send({ data: user });
+    } else {
+      res.status(OK).send({ data: user });
+    }
   })
+  .catch((err) => {
+    if (err.name === 'CastError') {
+      return res.status(BAD_REQUEST).send({ message: 'Некорректные данные пользователя' });
+    }
+    return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+  });
 };
 
 // Создание пользователя (Регистрация)
