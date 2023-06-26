@@ -23,7 +23,7 @@ module.exports.createCard = (req, res) => {
           message: 'Переданы некорректные данные при создании карточки.',
         });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
+        res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
       }
     });
 };
@@ -45,7 +45,7 @@ module.exports.deleteCard = (req, res) => {
           message: 'Переданы некорректные данные карточки.',
         });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
+        res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
       }
     });
 };
@@ -71,7 +71,7 @@ module.exports.likeCard = (req, res) => {
             message: 'Переданы некорректные данные для постановки лайка.',
           });
       }
-      return res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
+      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -96,6 +96,6 @@ module.exports.removeLikeCard = (req, res) => {
             message: 'Переданы некорректные данные для удаления лайка.',
           });
       }
-      return res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
+      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
