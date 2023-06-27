@@ -1,12 +1,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 
 const routes = require('./routes/router');
 const { PORT = 3000 } = process.env;
 const app = express();
 
-app.use(helmet());
+// AntiDOS & helmet
+// https://www.npmjs.com/package/express-rate-limit
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 минут
+  max: 100, // Лимитировать каждый IP до 100 запросов на `окно` (здесь, за 15 минут)
+  standardHeaders: true, // Лимит скорости возврата в заголовках `RateLimit-*`
+  legacyHeaders: false, // Отключите заголовки `X-RateLimit-*`
+});
+app.use(limiter); // AntiDOS на все реквесты
+app.use(helmet()); // защита
+
 app.disable('x-powered-by');
 app.use(express.json());
 app.use((req, res, next) => {
