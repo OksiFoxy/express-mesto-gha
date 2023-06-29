@@ -1,5 +1,11 @@
 const Card = require('../models/cardSchema');
-const { OK, CREATED, BAD_REQUEST, NOT_FOUND, SERVER_ERROR, } = require('../utils/constants');
+const {
+  OK,
+  CREATED,
+  BAD_REQUEST,
+  NOT_FOUND,
+  SERVER_ERROR,
+} = require('../utils/constants');
 
 // Возвращает все карточки:
 module.exports.getCardList = (req, res) => {
