@@ -4,7 +4,7 @@ const {
   getUserList, getUserId, createUser, updateUserData, updateUserAvatar,
 } = require('../controllers/users');
 
-//GET /users — возвращает всех пользователей
+// возвращает всех пользователей
 router.get('/', getUserList);
 // GET /users/:userId - возвращает пользователя по _id
 router.get('/:id', getUserId);
