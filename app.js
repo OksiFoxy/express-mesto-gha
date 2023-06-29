@@ -28,16 +28,10 @@ app.use((req, res, next) => {
 });
 
 mongoose.set('debug', true);
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
-  .then(() => {
-    console.log('БД подключена');
-  })
-  .catch(() => {
-    console.log('БД отвалилась');
-  });
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(allRouters);
-
+// eslint-disable-next-line no-console
 app.listen(PORT, () => {
   console.log(`Приложение слушает порт ${PORT}`);
 });
