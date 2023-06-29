@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const routes = require('./routes/router');
+const allroutes = require('./routes/router');
 const { PORT = 3000 } = process.env;
 const app = express();
 
@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(routes);
+app.use(allroutes);
 mongoose.set('debug', true);
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   .then(() => {
