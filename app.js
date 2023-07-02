@@ -1,9 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const { errors } = require('celebrate');
-const routes = require('./routes/router');
+// const { errors } = require('celebrate');
+const rateLimit = require('express-rate-limit');
+const allRouters = require('./routes/router');
+
 const { PORT = 3000 } = process.env;
 const app = express();
 
@@ -19,18 +20,13 @@ app.use(limiter); // AntiDOS на все реквесты
 app.use(helmet()); // защита
 
 app.disable('x-powered-by');
-app.use(express.json());8815
+app.use(express.json());
 
-app.use(routes);
 mongoose.set('debug', true);
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
-  .then(() => {
-    console.log('БД подключена');
-  })
-  .catch(() => {
-    console.log('БД отвалилась');
-  });
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
+app.use(allRouters);
+// eslint-disable-next-line no-console
 app.listen(PORT, () => {
   console.log(`Приложение слушает порт ${PORT}`);
 });
