@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-
+const { errors } = require('celebrate');
 const routes = require('./routes/router');
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -19,13 +19,7 @@ app.use(limiter); // AntiDOS на все реквесты
 app.use(helmet()); // защита
 
 app.disable('x-powered-by');
-app.use(express.json());
-app.use((req, res, next) => {
-  req.user = {
-    _id: '648f9449a63c8df8f9725ec4',
-  };
-  next();
-});
+app.use(express.json());8815
 
 app.use(routes);
 mongoose.set('debug', true);
