@@ -18,12 +18,8 @@ module.exports.getUserList = (req, res, next) => {
 // Получение пользователя
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        return next(new NotFoundError('Нет пользователя с таким id'));
-      }
-      return res.send({ data: user });
-    })
+    .orFail(new NotFoundError('Нет пользователя с таким id'))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некорректные данные пользователя'));
@@ -35,12 +31,8 @@ module.exports.getCurrentUser = (req, res, next) => {
 // Получение пользователя по ID
 module.exports.getUserId = (req, res, next) => {
   User.findById(req.params.id)
-    .then((user) => {
-      if (!user) {
-        return next(new NotFoundError('Нет пользователя с таким id'));
-      }
-      return res.send({ data: user });
-    })
+    .orFail(new NotFoundError('Нет пользователя с таким id'))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некорректные данные пользователя'));
