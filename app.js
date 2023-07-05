@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-// const { errors } = require('celebrate');
+const { errors } = require('celebrate');
 const rateLimit = require('express-rate-limit');
 const allRouters = require('./routes/router');
 
@@ -26,7 +26,10 @@ mongoose.set('debug', true);
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(allRouters);
-// eslint-disable-next-line no-console
+// здесь обрабатываем все ошибки
+app.use(errors());
+
+app.listen(PORT);
 app.listen(PORT, () => {
   console.log(`Приложение слушает порт ${PORT}`);
 });

@@ -6,6 +6,7 @@ const {
 
 //GET /users — возвращает всех пользователей
 userRouter.get('/', getUserList);
+// Получение пользователя
 userRouter.get('/me', getCurrentUser);
 // GET /users/:userId - возвращает пользователя по _id
 userRouter.get('/:id', getUserId);

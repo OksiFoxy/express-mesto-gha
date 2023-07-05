@@ -50,21 +50,5 @@ userSchema.statics.findUserByCredentials = function(email, password) {
         });
     });
 };
-// controllers/users.js
-
-module.exports.login = (req, res) => {
-  const { email, password } = req.body;
-
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      // аутентификация успешна! пользователь в переменной user
-    })
-    .catch((err) => {
-      // ошибка аутентификации
-      res
-        .status(401)
-        .send({ message: err.message });
-    });
-};
 
 module.exports = mongoose.model('user', userSchema);
