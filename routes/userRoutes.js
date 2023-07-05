@@ -3,8 +3,7 @@ const userRouter = require('express').Router();
 const {
   getUserList, getUserId, getCurrentUser, updateUserData, updateUserAvatar,
 } = require('../controllers/users');
-
-//GET /users — возвращает всех пользователей
+// GET /users — возвращает всех пользователей
 userRouter.get('/', getUserList);
 // Получение пользователя
 userRouter.get('/me', getCurrentUser);

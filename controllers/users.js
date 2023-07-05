@@ -1,11 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userSchema');
-
 const BadRequestError = require('../errors/BadRequest'); // 400
 const NotFoundError = require('../errors/NotFound'); // 404
 const ConflictError = require('../errors/ConflictError'); // 409
-
 const {
   CREATED,
   SECRET,

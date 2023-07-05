@@ -29,7 +29,6 @@ app.use(allRouters);
 // здесь обрабатываем все ошибки
 app.use(errors());
 
-app.listen(PORT);
 app.listen(PORT, () => {
   console.log(`Приложение слушает порт ${PORT}`);
 });
