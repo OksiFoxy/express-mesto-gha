@@ -54,12 +54,12 @@ module.exports.getUserId = (req, res, next) => {
 // Создание пользователя (Регистрация)
 module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password,
+    email, password, name, about, avatar,
   } = req.body;
 
   return bcrypt.hash(password, 10)
     .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
+      email, password: hash, name, about, avatar,
     })
       .then((user) => res.status(CREATED).send(user)))
     .catch((err) => {
