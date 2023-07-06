@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const AuthError = require('../errors/AuthError');
+const validRegex = require('../utils/validRegex');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -9,20 +10,20 @@ const userSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 30,
     required: true,
+    default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 30,
     required: true,
+    default: 'Исследователь',
   },
   avatar: {
     type: String,
     required: true,
-    validate: {
-      validator: (v) => validator.isURL(v),
-      message: 'Некорректный URL',
-    },
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: validRegex,
   },
   email: {
     type: String,

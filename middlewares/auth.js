@@ -2,25 +2,19 @@ const jwt = require('jsonwebtoken');
 const { SECRET } = require('../utils/constants');
 const AuthError = require('../errors/AuthError');
 
-const handleAuthError = (res, req, next) => {
-  next(new AuthError('С токеном что-то не так.'));
-};
+module.exports = (req, res, next) => {
+  const authorization = req.cookies.jwt;
 
-const extractBearerToken = (header) => header.replace('Bearer ', '');
-
-// eslint-disable-next-line consistent-return
-module.exports = function authMiddleware(req, res, next) {
-  const { authorization } = req.headers;
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return handleAuthError(res);
+  if (!authorization) {
+    return (next(new AuthError('Необходима авторизация')));
   }
-  const token = extractBearerToken(authorization);
+  const token = authorization.replace('Bearer ', '');
   let payload;
   try {
     payload = jwt.verify(token, SECRET);
   } catch (err) {
-    return handleAuthError(res);
+    return (next(new AuthError('Необходима авторизация')));
   }
-  req.user = payload; // записываем пейлоуд в объект запроса
-  next(); // пропускаем запрос дальше
+  req.user = payload;
+  return (next());
 };

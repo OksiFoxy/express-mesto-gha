@@ -11,7 +11,7 @@ const {
 // Получение списка пользователей
 module.exports.getUserList = (req, res, next) => {
   User.find({})
-    .then((users) => res.send(users))
+    .then((users) => res.send({ data: users }))
     .catch((err) => next(err));
 };
 // Получение пользователя
