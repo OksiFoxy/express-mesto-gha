@@ -5,7 +5,6 @@ const BadRequestError = require('../errors/BadRequest'); // 400
 const NotFoundError = require('../errors/NotFound'); // 404
 const ConflictError = require('../errors/ConflictError'); // 409
 const {
-  CREATED,
   SECRET,
 } = require('../utils/constants');
 
@@ -52,7 +51,7 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.status(CREATED).send(user))
+    .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректные данные пользователя'));
