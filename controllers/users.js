@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userSchema');
 const BadRequestError = require('../errors/BadRequest'); // 400
@@ -52,7 +52,8 @@ module.exports.getUserId = (req, res, next) => {
 };
 
 // Создание пользователя (Регистрация)
-module.exports.createUser = (req, res, next) => {
+// eslint-disable-next-line func-names
+module.exports.createUser = function (req, res, next) {
   const {
     email, password, name, about, avatar,
   } = req.body;
