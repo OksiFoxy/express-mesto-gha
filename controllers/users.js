@@ -1,4 +1,4 @@
-// const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userSchema');
 const BadRequestError = require('../errors/BadRequest'); // 400
@@ -52,15 +52,23 @@ module.exports.getUserId = (req, res, next) => {
 };
 
 // Создание пользователя (Регистрация)
-// eslint-disable-next-line func-names
-module.exports.createUser = function (req, res, next) {
+module.exports.createUser = (req, res, next) => {
   const {
     email, password, name, about, avatar,
   } = req.body;
 
-  return User.create({
-    email, password, name, about, avatar,
-  }).then((user) => res.status(CREATED).send(user))
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      email,
+      password: hash,
+      name,
+      about,
+      avatar,
+    }))
+    .then((user) => {
+      const userNoPassword = user.toObject({ useProtection: true });
+      res.status(CREATED).send(userNoPassword);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректные данные пользователя'));
@@ -129,8 +137,9 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, SECRET, { expiresIn: '7d' });
-      res.send({ token });
+      res.send({
+        token: jwt.sign({ _id: user._id }, SECRET, { expiresIn: '7d' }),
+      });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
