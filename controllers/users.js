@@ -35,7 +35,7 @@ module.exports.getCurrentUser = (req, res, next) => {
 // Получение пользователя по ID
 module.exports.getUserId = (req, res, next) => {
   User.findById(req.params.id)
-  .orFail(new NotFoundError('Нет пользователя с таким id'))
+    .orFail(new NotFoundError('Нет пользователя с таким id'))
     .then((user) => {
       if (!user) {
         return next(new NotFoundError('Нет пользователя с таким id'));
