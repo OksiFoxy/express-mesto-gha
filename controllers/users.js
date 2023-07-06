@@ -60,8 +60,8 @@ module.exports.createUser = (req, res, next) => {
   return bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
-    }))
-    .then((user) => res.status(CREATED).send(user))
+    })
+      .then((user) => res.status(CREATED).send(user)))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректные данные пользователя'));
