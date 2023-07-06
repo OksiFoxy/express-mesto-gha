@@ -1,12 +1,11 @@
 const Card = require('../models/cardSchema');
 const {
-  OK,
   CREATED,
 } = require('../utils/constants');
 
 const BadRequestError = require('../errors/BadRequest'); // 400
 const NotFoundError = require('../errors/NotFound'); // 404
-const ConflictError = require('../errors/ConflictError'); // 409
+// const ConflictError = require('../errors/ConflictError'); // 409
 const NotUserError = require('../errors/NotUser'); // 409
 
 // Возвращает все карточки:
