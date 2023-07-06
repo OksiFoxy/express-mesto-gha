@@ -5,30 +5,50 @@ const BadRequestError = require('../errors/BadRequest'); // 400
 const NotFoundError = require('../errors/NotFound'); // 404
 const ConflictError = require('../errors/ConflictError'); // 409
 const {
+  CREATED,
   SECRET,
 } = require('../utils/constants');
 
 // Получение списка пользователей
 module.exports.getUserList = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.send(users))
     .catch((err) => next(err));
 };
-
 // Получение пользователя
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail(new NotFoundError('Нет пользователя с таким id'))
-    .then((userData) => res.send({ data: userData }))
-    .catch((err) => next(err));
+    .then((user) => {
+      if (!user) {
+        return next(new NotFoundError('Нет пользователя с таким id'));
+      }
+      return res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Некорректные данные пользователя'));
+      } else {
+        next(err);
+      }
+    });
 };
-
 // Получение пользователя по ID
 module.exports.getUserId = (req, res, next) => {
   User.findById(req.params.id)
-    .orFail(new NotFoundError('Нет пользователя с таким id'))
-    .then((userData) => res.send({ data: userData }))
-    .catch((err) => next(err));
+  .orFail(new NotFoundError('Нет пользователя с таким id'))
+    .then((user) => {
+      if (!user) {
+        return next(new NotFoundError('Нет пользователя с таким id'));
+      }
+      return res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Некорректные данные пользователя'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // Создание пользователя (Регистрация)
@@ -41,14 +61,7 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then(() => res.status(201).send(
-      {
-        name,
-        about,
-        avatar,
-        email,
-      },
-    ))
+    .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректные данные пользователя'));
@@ -63,13 +76,15 @@ module.exports.createUser = (req, res, next) => {
 // Обновление профиля пользователя
 module.exports.updateUserData = (req, res, next) => {
   const {
-    name, about,
+    name, about, email, password,
   } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
     {
       name,
       about,
+      email,
+      password,
     },
     {
       new: true,
