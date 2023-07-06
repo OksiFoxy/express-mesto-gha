@@ -9,8 +9,8 @@ router.use('/users', auth, userRoutes);
 router.use('/cards', auth, cardRoutes);
 router.use('/signin', login);
 router.use('/signup', createUser);
-router.use('/*', auth, () => {
-  throw new NotFound('404: Страница не найдена.');
+router.use('/*', auth, (req, res, next) => {
+  next(new NotFound('404: Страница не найдена.'));
 });
 
 module.exports = router;
