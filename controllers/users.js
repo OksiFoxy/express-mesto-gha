@@ -66,7 +66,8 @@ module.exports.createUser = (req, res, next) => {
       avatar,
     }))
     .then((user) => {
-      const userNoPassword = user.toObject({ useProtection: true });
+      const userNoPassword = user.toObject();
+      delete userNoPassword.password;
       res.status(CREATED).send(userNoPassword);
     })
     .catch((err) => {
