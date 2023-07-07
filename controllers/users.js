@@ -34,7 +34,7 @@ module.exports.getCurrentUser = (req, res, next) => {
 };
 // Получение пользователя по ID
 module.exports.getUserId = (req, res, next) => {
-  User.findById(req.params.id)
+  User.findById(req.params._id)
     .then((user) => {
       if (user) {
         res.send(user);
@@ -135,7 +135,6 @@ module.exports.updateUserAvatar = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-
   return User.findUserByCredentials(email, password)
     .then((user) => {
       res.send({
