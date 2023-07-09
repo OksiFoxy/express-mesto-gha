@@ -10,7 +10,7 @@ userRouter.get('/', getUserList);
 // Получение пользователя
 userRouter.get('/me', getCurrentUser);
 // GET /users/:userId - возвращает пользователя по _id
-userRouter.get('/:id', validUserId, getUserId);
+userRouter.get('/:userId', validUserId, getUserId);
 // Обновить профиль или аватар
 userRouter.patch('/me', validUserUpdate, updateUserData);
 userRouter.patch('/me/avatar', validUpdateAvatar, updateUserAvatar);

@@ -53,14 +53,25 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .orFail(new NotFoundError('Нет такого ID карточки.'))
     .then((card) => {
-      if (!card.owner.equals(req.user._id)) return next(new NotUserError('Это чужая карточка.'));
-
-      return Card.deleteOne(card)
-        .then(() => res.send({ message: card }));
+      if (!card) {
+        next(new NotFoundError('Нет такого ID карточки.'));
+      } else if (card.owner.toString() !== req.user._id) {
+        next(new NotUserError('Это чужая карточка.'));
+      } else {
+        Card.findByIdAndRemove(req.params.cardId)
+          .then((findedcard) => {
+            res.status(200).send({ data: findedcard });
+          });
+      }
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные при удалении карточки'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // Поставить лайк карточке:

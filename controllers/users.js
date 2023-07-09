@@ -34,12 +34,12 @@ module.exports.getCurrentUser = (req, res, next) => {
 };
 // Получение пользователя по ID
 module.exports.getUserId = (req, res, next) => {
-  User.findById(req.params._id)
+  User.findById(req.params.userid)
     .then((user) => {
-      if (user) {
-        res.send(user);
-      } else {
+      if (!user) {
         next(new NotFoundError('Нет пользователя с таким id'));
+      } else {
+        res.status(200).send({ data: user });
       }
     })
     .catch((err) => {
