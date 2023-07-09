@@ -34,7 +34,7 @@ module.exports.getCurrentUser = (req, res, next) => {
 };
 // Получение пользователя по ID
 module.exports.getUserId = (req, res, next) => {
-  User.findById(req.params.userid)
+  User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
         next(new NotFoundError('Нет пользователя с таким id'));
