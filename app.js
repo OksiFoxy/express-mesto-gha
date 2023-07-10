@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
 const rateLimit = require('express-rate-limit');
+const errorHandler = require('./middlewares/errorHandler');
 const allRouters = require('./routes/router');
 
 const { PORT = 3000 } = process.env;
@@ -28,6 +29,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 app.use(allRouters);
 // здесь обрабатываем все ошибки
 app.use(errors());
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Приложение слушает порт ${PORT}`);
