@@ -30,27 +30,6 @@ module.exports.createCard = (req, res, next) => {
     });
 };
 
-// Удаление карточки:
-// module.exports.deleteCard = (req, res, next) => {
-//   Card.findByIdAndRemove(req.params.cardId)
-//     .orFail(new NotFoundError('Такого ID карточки нет.'))
-//     .then((card) => {
-//       if (!card) {
-//         return next(new NotFoundError('Карточка с указанным _id не найдена'));
-//       }
-//       return res.status(OK).send(card);
-//     })
-//     .catch((err) => {
-//       if (err.name === 'CastError') {
-//         next(new BadRequestError('Некорректные данные карточки'));
-//       } else if (err.code === 11000) {
-//         next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
-//       } else {
-//         next(err);
-//       }
-//     });
-// };
-
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
@@ -59,7 +38,7 @@ module.exports.deleteCard = (req, res, next) => {
       } else if (card.owner.toString() !== req.user._id) {
         next(new NotUserError('Это чужая карточка.'));
       } else {
-        Card.findByIdAndRemove(req.params.cardId)
+        Card.deleteOne(card)
           .then((findedcard) => {
             res.status(200).send({ data: findedcard });
           });
